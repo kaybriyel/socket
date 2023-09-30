@@ -1,0 +1,16 @@
+services:
+  socket-redis:
+    build:
+      context: ./
+    restart: always
+
+    volumes:
+      - ./cache:/data
+      - ./src:/usr/app/src
+      - ./.env.example:/usr/app/.env
+      - ./public:/usr/app/public
+      - ./package.json:/usr/app/package.json
+
+    ports:
+      - 80:80
+      - 6379:6379

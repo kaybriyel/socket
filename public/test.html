@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    button {
+      margin: 1px;
+    }
+  </style>
+</head>
+
+<body>
+      <div id="root">
+        <button onclick="notify()">NOTIFY</button>
+        <!-- <button onclick="emit()">Test</button> -->
+        <!-- <button onclick="emitAll()">Test Broadcast</button> -->
+      </div>
+      <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+        integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+        crossorigin="anonymous"></script>
+      <script>
+        const nsp = location.hash ? location.hash.replace('#', '') : location.search
+
+        for(let i = 0; i < 1; i) init(++i)
+
+        async function notify() {
+          const res = await fetch('/notify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event: 'testing'
+            })
+          })
+        }
+
+        function init(i) {
+          const socket = io(nsp, {
+            auth: {
+              token: 'WPFUvHkB1aHA5TDSZi6xt'
+            }
+          });
+          socket.on('connect', () => {
+            console.log(i, 'connected')
+          });
+          socket.on('disconnect', () => {
+            console.log(i, 'disconnected')
+          })
+          socket.on('error', () => {
+            console.error(i, 'cannot connect')
+          });
+
+          socket.on('testing', () => console.log(i, 'testing from server'));
+          socket.on('testing_all', () => console.log(i, 'broadcast testing from server'))
+          const emit = () => socket.emit('testing');
+          const emitAll = () => socket.emit('testing_all')
+
+          const span = document.createElement('button')
+          const btnEmit = document.createElement('button')
+          const btnEmitAll = document.createElement('button')
+          const div = document.createElement('div')
+          div.append(span, btnEmit, btnEmitAll)
+          document.querySelector('#root').append(div)
+
+          btnEmit.addEventListener('click', emit)
+          btnEmitAll.addEventListener('click', emitAll)
+
+          span.innerHTML = i
+          btnEmit.innerHTML = 'EMIT'
+          btnEmitAll.innerHTML = 'EMIT ALL'
+        }
+      </script>
+</body>
+
+</html>
