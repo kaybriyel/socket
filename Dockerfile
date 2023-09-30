@@ -10,4 +10,8 @@ RUN cp .env.example .env
 
 RUN npm i
 
-CMD npm run dev & cd /data && redis-server
+RUN npm run build
+
+CMD node dist/server
+
+# CMD npm run dev & cd /data && redis-server
