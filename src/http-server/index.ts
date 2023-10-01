@@ -4,6 +4,7 @@ import https from 'https'
 import fs from 'fs'
 import bodyParser from 'body-parser'
 import appRoute from './routes/route'
+import { redisSub } from '../utils/redis'
 // import { redisClient } from '../utils/redis'
 
 
@@ -15,11 +16,11 @@ export default {
         app.use('/', express.static('public'))
         app.use(appRoute())
 
-        // redisClient.subscribe('ossp_api_database_data', (err, count) => console.log('sub:', count))
+        redisSub.subscribe('ossp_api_database_data', (err, count) => console.log('sub:', count))
 
-        // redisClient.on('message', (channel, message) => {
-        //     console.log(channel, message)
-        // })
+        redisSub.on('message', (channel, message) => {
+            console.log(channel, message)
+        })
 
         if (env.PROTOCOL === 'https') return serverHttps()
         else return serverHttp()

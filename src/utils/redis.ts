@@ -1,4 +1,5 @@
-import IoRedis, { RedisOptions } from 'ioredis'
+import { Redis, RedisOptions } from 'ioredis'
+import env from '../env'
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -6,19 +7,29 @@ dotenv.config()
 // if(!process.env.CACHE_HOST) throw Error('INVAID CACHE_HOST, CHECK ENV')
 // if(!process.env.CACHE_PORT) throw Error('INVAID CACHE_PORT, CHECK ENV')
 
-let redisOption: RedisOptions = {
-  host: process.env.CACHE_HOST || 'localhost',
-  port: Number(process.env.CACHE_PORT || 6379),
-}
+// const redisOption: RedisOptions = {
+//   host: process.env.CACHE_HOST || 'localhost',
+//   port: Number(process.env.CACHE_PORT || 6379),
+// }
 
-export const redisClient = new IoRedis(redisOption)
+export const redisClient = new Redis(env.REDIS_URL)
+
+// export const redisClient  = new Redis('localhost')
+
+export const redisSub = redisClient.duplicate()
 
 redisClient.on('error', (err: Error) => {
-  console.error('Session Redis error: ' + err)
+  console.error('Redis client error: ' + err)
 })
 
 redisClient.on('connect', () => {
-  console.log('Session connected to redis')
+  console.log('Redis client connected to redis')
 })
 
-export const redisSub = redisClient.duplicate()
+redisSub.on('error', (err: Error) => {
+  console.error('Redis sub error: ' + err)
+})
+
+redisSub.on('connect', () => {
+  console.log('Redis sub connected to redis')
+})

@@ -10,5 +10,6 @@ export default {
     KEY_PEM: process.env.KEY_PEM,
     CERT_PEM: process.env.CERT_PEM,
     ALLOW_ORIGIN: process.env.ALLOW_ORIGIN,
-    USE_CORS: process.env.USE_CORS
+    USE_CORS: process.env.USE_CORS,
+    REDIS_URL: process.env.REDIS_URL || ''
 }
